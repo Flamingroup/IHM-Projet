@@ -42,7 +42,7 @@ private:
 
      QextSerialPort* m_port;
 
-    KalmanPlot* m_plot;
+    Plot* m_plot;
     //QwtPlotCurve* m_curve;
     //QVector<QPointF> m_points;
 

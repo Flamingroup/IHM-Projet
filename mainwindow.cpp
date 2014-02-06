@@ -28,7 +28,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
 
-    m_plot = new KalmanPlot(this);
+    m_plot = new Plot(this);
 
     this->setMinimumSize(700, 500 );
 
@@ -162,34 +162,34 @@ void MainWindow::saveCurve(void)
 
 void MainWindow::loadCurve(void)
 {
-    QString file = QFileDialog::getOpenFileName(this, tr("Open file"), QString(), tr("CSV file (*.csv)"));
-    vector<float> vect;
-    ifstream curveFile(file.toStdString().c_str());
-    if(!curveFile)
-    {
-        QMessageBox::warning(this, tr("Error while trying to open file"), tr("Can't open file, an error occured"));
-        return;
-    }
+//    QString file = QFileDialog::getOpenFileName(this, tr("Open file"), QString(), tr("CSV file (*.csv)"));
+//    vector<float> vect;
+//    ifstream curveFile(file.toStdString().c_str());
+//    if(!curveFile)
+//    {
+//        QMessageBox::warning(this, tr("Error while trying to open file"), tr("Can't open file, an error occured"));
+//        return;
+//    }
 
-    else
-    {
-        m_plot->clearCurve(); //à implémenter pour enlever les valeurs lorsque l'on charge un fichier
+//    else
+//    {
+//        m_plot->clearCurve(); //à implémenter pour enlever les valeurs lorsque l'on charge un fichier
 
-        string val;
-        getline(curveFile, val);
+//        string val;
+//        getline(curveFile, val);
 
 
-        while(val.size() != 0)
-        {
-            vect.clear();
-            vect.push_back(QString(val.c_str()).toFloat());
-            m_plot->updCurve(vect);
-            getline(curveFile, val);
-        }
+//        while(val.size() != 0)
+//        {
+//            vect.clear();
+//            vect.push_back(QString(val.c_str()).toFloat());
+//            m_plot->updCurve(vect);
+//            getline(curveFile, val);
+//        }
 
-    }
+//    }
 
-    QMessageBox::information(this, tr("Loading curve"), tr("Curve has been loaded successfully !"));
+//    QMessageBox::information(this, tr("Loading curve"), tr("Curve has been loaded successfully !"));
 
 }
 
@@ -219,7 +219,6 @@ void MainWindow::onDataReceived(void)
     {
         receive();
     }
-
 }
 
 void MainWindow::calculer()
@@ -228,33 +227,19 @@ void MainWindow::calculer()
    // m_plot->calculer();
 }
 
-
 void MainWindow::receive()
 {
-
-
+    float val;
     array.append(m_port->readAll());
-    m_status->setText(QString(array));
+    m_status->setText("Receiving");
+    m_dataMeasured->setText(QString(array));
     if(array.contains('\n'))
     {
-        float val;
-
-        QList<QByteArray> values;
-        array.truncate(array.indexOf('\n'));
-        values = array.split(';');
-        vector<float> valuesFloat;
-
-        for(int i = 0; i < 3; ++i)
-            valuesFloat.push_back(values[i].toDouble())  ;
-
-        //val = array.toDouble();
+        array.truncate(array.indexOf('\r'));
+        val = array.toDouble();
         array.clear();
-        //cout<<val<<endl;
-        //m_dataMeasured->setText(tr("%1").arg(val));
-        m_plot->updCurve(valuesFloat);
+        m_plot->updCurve(val);
     }
-
-
 
 }
 
