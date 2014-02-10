@@ -18,9 +18,10 @@ TEMPLATE = app
 
     # QWT Library
     CONFIG += qwt
+    CONFIG += extserialport
 
     # QEXTSERIALPORT Library
-    include(3rdparty/qextserialport/src/qextserialport.pri)
+    #include(3rdparty/qextserialport/src/qextserialport.pri)
 
 
 SOURCES += main.cpp\
