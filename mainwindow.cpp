@@ -162,34 +162,32 @@ void MainWindow::saveCurve(void)
 
 void MainWindow::loadCurve(void)
 {
-//    QString file = QFileDialog::getOpenFileName(this, tr("Open file"), QString(), tr("CSV file (*.csv)"));
-//    vector<float> vect;
-//    ifstream curveFile(file.toStdString().c_str());
-//    if(!curveFile)
-//    {
-//        QMessageBox::warning(this, tr("Error while trying to open file"), tr("Can't open file, an error occured"));
-//        return;
-//    }
+    QString file = QFileDialog::getOpenFileName(this, tr("Open file"), QString(), tr("CSV file (*.csv)"));
+    vector<float> vect;
+    ifstream curveFile(file.toStdString().c_str());
+    if(!curveFile)
+    {
+        QMessageBox::warning(this, tr("Error while trying to open file"), tr("Can't open file, an error occured"));
+        return;
+    }
 
-//    else
-//    {
-//        m_plot->clearCurve(); //à implémenter pour enlever les valeurs lorsque l'on charge un fichier
+    else
+    {
+        m_plot->clearCurve(); //Ã  implÃ©menter pour enlever les valeurs lorsque l'on charge un fichier
 
-//        string val;
-//        getline(curveFile, val);
+        string val;
+        getline(curveFile, val);
 
 
-//        while(val.size() != 0)
-//        {
-//            vect.clear();
-//            vect.push_back(QString(val.c_str()).toFloat());
-//            m_plot->updCurve(vect);
-//            getline(curveFile, val);
-//        }
+        while(val.size() != 0)
+        {
+            m_plot->updCurve(QString(val.c_str()).toFloat());
+            getline(curveFile, val);
+        }
 
-//    }
+    }
 
-//    QMessageBox::information(this, tr("Loading curve"), tr("Curve has been loaded successfully !"));
+    QMessageBox::information(this, tr("Loading curve"), tr("Curve has been loaded successfully !"));
 
 }
 
