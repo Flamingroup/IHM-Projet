@@ -12,6 +12,8 @@
 #include <QFileDialog>
 #include <fstream>
 #include <QBuffer>
+#include <QVariant>
+
 
 
 using namespace std;
@@ -29,17 +31,19 @@ MainWindow::MainWindow(QWidget *parent)
 {
 
     m_plot = new Plot(this);
-
-    this->setMinimumSize(700, 500 );
+    m_vect = new QListView(this);
+    ListModel=new QStandardItemModel();
+    this->setMinimumSize(700, 500);
 
     QwtPlotMagnifier* magnifier = new QwtPlotMagnifier(m_plot->canvas());
     QwtPlotPanner* panner = new QwtPlotPanner(m_plot->canvas());
     panner->setMouseButton(Qt::LeftButton);
 
     QWidget * centralArea = new QWidget;
-    QGridLayout *layout = new QGridLayout;
+    QHBoxLayout *layout = new QHBoxLayout;
 
     layout->addWidget(m_plot);
+    layout->addWidget(m_vect);
     centralArea->setLayout(layout);
 
     this->setCentralWidget(centralArea);
@@ -174,6 +178,8 @@ void MainWindow::loadCurve(void)
     else
     {
         m_plot->clearCurve(); //à implémenter pour enlever les valeurs lorsque l'on charge un fichier
+        m_vect->clearSelection();
+        ListModel->clear();
 
         string val;
         getline(curveFile, val);
@@ -182,6 +188,8 @@ void MainWindow::loadCurve(void)
         while(val.size() != 0)
         {
             m_plot->updCurve(QString(val.c_str()).toFloat());
+            ListModel->appendRow(new QStandardItem(QString(val.c_str())));
+            m_vect->setModel(ListModel);
             getline(curveFile, val);
         }
 
@@ -237,6 +245,9 @@ void MainWindow::receive()
         val = array.toDouble();
         array.clear();
         m_plot->updCurve(val);
+        QVariant * float_value=new QVariant(val);
+        ListModel->appendRow(new QStandardItem(float_value->toString()));
+        m_vect->setModel(ListModel);
     }
 
 }

@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QLabel>
 #include <QLineEdit>
+#include <QListView>
+#include <QStandardItemModel>
 #include "plot.h"
 #include "qextserialport.h"
 #include "kalmanplot.h"
@@ -45,7 +47,8 @@ private:
     Plot* m_plot;
     //QwtPlotCurve* m_curve;
     //QVector<QPointF> m_points;
-
+    QListView* m_vect;
+    QStandardItemModel* ListModel;
 
     QMenu* m_fileMenu;
     QMenu* m_viewMenu;
