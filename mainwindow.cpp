@@ -22,7 +22,7 @@ bool RXfree = true;
 char m_RXmessage[7];
 quint16 messByte = 0;
 QBuffer buffer;
-QByteArray array;
+QByteArray tableau;
 
 
 
@@ -34,17 +34,36 @@ MainWindow::MainWindow(QWidget *parent)
     m_vect = new QListView(this);
     ListModel=new QStandardItemModel();
     this->setMinimumSize(700, 500);
+    m_vect->setMinimumWidth(150);
+    m_vect->setMaximumWidth(250);
+    m_command=new QLineEdit(this);
+    m_sendCommand = new QPushButton(this);
+    connect(m_sendCommand, SIGNAL(clicked()), this, SLOT(onSendCommandPressed()));
+    m_sendCommand->setText("Envoyer commande");
+    /*
+     *Pour que le bouton ajuste sa taille lorsque l'on agrandit la fenetre
+     *m_sendCommand->????();
+     */
+    m_sendCommand->setMinimumWidth(150);
+    m_sendCommand->setMaximumWidth(250);
 
     QwtPlotMagnifier* magnifier = new QwtPlotMagnifier(m_plot->canvas());
     QwtPlotPanner* panner = new QwtPlotPanner(m_plot->canvas());
     panner->setMouseButton(Qt::LeftButton);
 
     QWidget * centralArea = new QWidget;
-    QHBoxLayout *layout = new QHBoxLayout;
+    QHBoxLayout *plotAndVect = new QHBoxLayout;
+    QHBoxLayout *cmdLineAndButton = new QHBoxLayout;
+    QVBoxLayout *central = new QVBoxLayout;
 
-    layout->addWidget(m_plot);
-    layout->addWidget(m_vect);
-    centralArea->setLayout(layout);
+    plotAndVect->addWidget(m_plot);
+    plotAndVect->addWidget(m_vect);
+    cmdLineAndButton->addWidget(m_command);
+    cmdLineAndButton->addWidget(m_sendCommand);
+
+    central->addLayout(plotAndVect);
+    central->addLayout(cmdLineAndButton);
+    centralArea->setLayout(central);
 
     this->setCentralWidget(centralArea);
 
@@ -137,7 +156,7 @@ void MainWindow::createStatusBar(void)
 
 void MainWindow::startReadingPort(void)
 {
-    if(!m_port->open(QIODevice::ReadOnly))
+    if(!m_port->open(QIODevice::ReadWrite))
     {
         QMessageBox::warning(0, "Error !", tr("Can't open port with specified settings !"));
     }
@@ -230,23 +249,45 @@ void MainWindow::onDataReceived(void)
 void MainWindow::calculer()
 {
    // feature disabled (corresponds to another coursework
-   // m_plot->calculer();
+    // m_plot->calculer();
+}
+
+void MainWindow::onSendCommandPressed()
+{
+    // do something
+    if (!m_port->isOpen()){
+        this->startReadingPort();
+    }
+    else {
+            QString tmp_stock = m_command->text();
+            if (!tmp_stock.isEmpty()) {
+                tmp_stock.append("\r\n");
+                m_port->write(tmp_stock.toStdString().c_str());
+                m_status->setText("Command sent : "+tmp_stock);
+            }
+            m_command->setText("");
+    }
 }
 
 void MainWindow::receive()
 {
     float val;
-    array.append(m_port->readAll());
+    tableau.append(m_port->readAll());
     m_status->setText("Receiving");
-    m_dataMeasured->setText(QString(array));
-    if(array.contains('\n'))
+    m_dataMeasured->setText(QString(tableau));
+    if(tableau.contains('\n'))
     {
-        array.truncate(array.indexOf('\r'));
-        val = array.toDouble();
-        array.clear();
+        tableau.truncate(tableau.indexOf('\r'));
+        val = tableau.toDouble();
+        //array.clear();
         m_plot->updCurve(val);
-        QVariant * float_value=new QVariant(val);
-        ListModel->appendRow(new QStandardItem(float_value->toString()));
+        //QVariant * float_value=new QVariant(val);
+        QString str(tableau);
+        for (QString s : str.split(",")){
+            ListModel->appendRow(new QStandardItem(s));
+        }
+        //        ListModel->appendRow(new QStandardItem(float_value->toString()));
+        tableau.clear();
         m_vect->setModel(ListModel);
     }
 

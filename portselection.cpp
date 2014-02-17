@@ -18,13 +18,14 @@ PortSelection::PortSelection(QextSerialPort *port, QWidget *parent) :
 
     box_baud = new QComboBox;
     box_baud->addItem("BAUD9600");
+    box_baud->addItem("BAUD19200");
     box_baud->addItem("BAUD115200");
 
     box_dataBits = new QComboBox;
-    box_dataBits->addItem("DATA_5");
-    box_dataBits->addItem("DATA_6");
-    box_dataBits->addItem("DATA_7");
     box_dataBits->addItem("DATA_8");
+    box_dataBits->addItem("DATA_7");
+    box_dataBits->addItem("DATA_6");
+    box_dataBits->addItem("DATA_5");
 
     box_flowControl = new QComboBox;
     box_flowControl->addItem("FLOW_OFF");           // No flow control
@@ -32,8 +33,8 @@ PortSelection::PortSelection(QextSerialPort *port, QWidget *parent) :
     box_flowControl->addItem("FLOW_XONXOFF");       // Software (XON/XOFF) flow control
 
     box_parity = new QComboBox;
-    box_parity->addItem("PAR_SPACE");
     box_parity->addItem("PAR_NONE");
+    box_parity->addItem("PAR_SPACE");
     box_parity->addItem("PAR_EVEN");
     box_parity->addItem("PAR_ODD");
 
@@ -76,6 +77,7 @@ PortSelection::PortSelection(QextSerialPort *port, QWidget *parent) :
 void PortSelection::initMap(void)
 {
     map_baud["BAUD9600"] = BAUD9600;
+    map_baud["BAUD19200"] = BAUD19200;
     map_baud["BAUD115200"] = BAUD115200;
 
     map_dataBits["DATA_5"] = DATA_5;

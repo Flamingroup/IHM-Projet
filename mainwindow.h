@@ -5,6 +5,7 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QListView>
+#include <QPushButton>
 #include <QStandardItemModel>
 #include "plot.h"
 #include "qextserialport.h"
@@ -36,13 +37,14 @@ public slots:
     void about(void);
     void onDataReceived(void);
     void calculer(void);
+    void onSendCommandPressed();
 
 signals:
     void dataAcquired();
 
 private:
 
-     QextSerialPort* m_port;
+    QextSerialPort* m_port;
 
     Plot* m_plot;
     //QwtPlotCurve* m_curve;
@@ -72,6 +74,8 @@ private:
     QLineEdit* m_status;
     QLabel* m_labelStatusBar;
     QLineEdit* m_dataMeasured;
+    QLineEdit* m_command;
+    QPushButton* m_sendCommand;
 
     void receive();
 
