@@ -9,9 +9,10 @@
 #include <QStandardItemModel>
 #include "plot.h"
 #include "qextserialport.h"
-#include "kalmanplot.h"
-
-//class SerialPort;
+//#include "kalmanplot.h"
+///
+#include <QTimer>
+///
 
 
 class MainWindow : public QMainWindow
@@ -38,9 +39,11 @@ public slots:
     void onDataReceived(void);
     void calculer(void);
     void onSendCommandPressed();
+    void updateQuery();
 
 signals:
     void dataAcquired();
+    void timeout();
 
 private:
 
@@ -72,10 +75,11 @@ private:
     QAction* m_aboutQt;
 
     QLineEdit* m_status;
-    QLabel* m_labelStatusBar;
-    QLineEdit* m_dataMeasured;
+    //QLabel* m_labelStatusBar;
+    //QLineEdit* m_dataMeasured;
     QLineEdit* m_command;
     QPushButton* m_sendCommand;
+    QTimer* m_timer;
 
     void receive();
 

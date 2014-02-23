@@ -19,23 +19,17 @@ QMAKE_CXXFLAGS +=   -std=c++11
 
     # QWT Library
     CONFIG += qwt
-    #CONFIG += extserialport
-    include ( /usr/local/qwt-6.1.0/features/qwt.prf )
+    CONFIG += extserialport
+    #include ( /usr/local/qwt-6.1.0/features/qwt.prf )
     # QEXTSERIALPORT Library
     include(3rdparty/qextserialport/src/qextserialport.pri)
 
 SOURCES += main.cpp\
         mainwindow.cpp \
     portselection.cpp \
-    plot.cpp \
-    serialport.cpp \
-    wheatstoneplot.cpp \
-    kalmanplot.cpp
+    plot.cpp
 
 HEADERS  += mainwindow.h \
     portselection.h \
-    plot.h \
-    serialport.h \
-    wheatstoneplot.h \
-    kalmanplot.h
+    plot.h
 

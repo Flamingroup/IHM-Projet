@@ -13,9 +13,9 @@
 #include <fstream>
 #include <QBuffer>
 #include <QVariant>
-
-
-
+///
+#include <sstream>      // std::stringstream
+///
 using namespace std;
 
 bool RXfree = true;
@@ -29,7 +29,9 @@ QByteArray tableau;
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
-
+    m_timer = new QTimer(this);
+    connect(m_timer, SIGNAL(timeout()), this, SLOT(updateQuery()));
+    m_timer->start(1000);
     m_plot = new Plot(this);
     m_vect = new QListView(this);
     ListModel=new QStandardItemModel();
@@ -135,17 +137,17 @@ void MainWindow::createStatusBar(void)
     m_status = new QLineEdit("No port opened", this);
     m_status->setAlignment(Qt::AlignHCenter);
     m_status->setReadOnly(true);
-
+    /*
     m_labelStatusBar = new QLabel("Measure in Volts");
     m_labelStatusBar->setAlignment(Qt::AlignHCenter);
 
     m_dataMeasured = new QLineEdit(this);
     m_dataMeasured->setAlignment(Qt::AlignHCenter);
     m_dataMeasured->setReadOnly(true);
-
+    */
     statusBar()->addWidget(m_status,1);
-    statusBar()->addWidget(m_labelStatusBar);
-    statusBar()->addWidget(m_dataMeasured);
+    //statusBar()->addWidget(m_labelStatusBar);
+    //statusBar()->addWidget(m_dataMeasured);
 
     m_port = new QextSerialPort;
 
@@ -269,28 +271,59 @@ void MainWindow::onSendCommandPressed()
     }
 }
 
+void MainWindow::updateQuery()
+{
+    if (!m_port->isOpen()){
+        //this->startReadingPort();
+    }
+    else {
+        QString tmp_stock("0R2");
+            if (!tmp_stock.isEmpty()) {
+                tmp_stock.append("\r\n");
+                m_port->write(tmp_stock.toStdString().c_str());
+            }
+    }
+}
+
 void MainWindow::receive()
 {
     float val;
     tableau.append(m_port->readAll());
     m_status->setText("Receiving");
-    m_dataMeasured->setText(QString(tableau));
+    //if non empty datagram
     if(tableau.contains('\n'))
     {
+        string recu(tableau);//Th=
+        string target="Th=";
+        const char *temp;
+        float f;
+        stringstream flux;
+        cout<<string(tableau)<<endl;
+        /*
+          string temp2(temp);
+          int pos = temp2.find('\n');
+          string temp3=temp2.substr(4, pos);
+          cout<<"temp3"<<temp3<<endl;
+          flux<<temp3;
+          flux>>f;
+          cout<<"T="<<f<<endl;
+        *
+        //m_dataMeasured->setText(QString(tableau));
         tableau.truncate(tableau.indexOf('\r'));
         val = tableau.toDouble();
         //array.clear();
-        m_plot->updCurve(val);
+        ///m_plot->updCurve(val);
+        m_plot->updCurve(f);
         //QVariant * float_value=new QVariant(val);
         QString str(tableau);
         for (QString s : str.split(",")){
             ListModel->appendRow(new QStandardItem(s));
         }
-        //        ListModel->appendRow(new QStandardItem(float_value->toString()));
+        //ListModel->appendRow(new QStandardItem(float_value->toString()));
         tableau.clear();
         m_vect->setModel(ListModel);
+        */
     }
-
 }
 
 
